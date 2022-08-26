@@ -41,7 +41,7 @@ public class Robot {
 		this.robotName=robotName;
 	}
 	
-	public void setRobotHp(int robotHP) {
+	public void setRobotHp(int robotHp) {
 		this.robotHp=robotHp;
 	}
 	
@@ -108,7 +108,8 @@ public class Robot {
 		
 		boolean seeTarget=true;
 		
-		while (seeTarget || killerRobot.getRobotHp()<=0) {
+		List <String> deadRobots = new ArrayList<>();
+		while (seeTarget ) {//|| killerRobot.getRobotHp()>0) {
 			List <Float> distanceList = new ArrayList<>();
 			float min=32000;
 			for(int robotIndex=0; robotIndex<robotNumber; robotIndex++) {
@@ -117,9 +118,26 @@ public class Robot {
 					min=distanceList.get(robotIndex);
 			}
 			int closestRobot = distanceList.indexOf(min);
-			seeTarget=false;
+			if (min<=killerRobot.getViewRange() && killerRobot.getRobotHp()>=robotList.get(closestRobot).getRobotHp()) {
+				attackRobot(killerRobot, robotList.get(closestRobot));
+				deadRobots.add(robotList.get(closestRobot).getName());
+				robotList.remove(closestRobot);
+				robotNumber--;
+			}
+			else 
+				seeTarget=false;
 		}
-
+		
+		System.out.println("last coordinates of the killer robot " + killerRobot.getName() + " are: X" + killerRobot.getPosX() + "  Y" + killerRobot.getPosY());
+		System.out.println(killerRobot.getName() + " has " + killerRobot.getRobotHp() + " hp left");
+		if (robotNumber!=0) {
+			System.out.println("the following robots survived: ");
+		for(int i=0; i<robotNumber; i++)
+			System.out.println(robotList.get(i).getName() + " ");
+		}
+		System.out.println(killerRobot.getName()  + " killed the following robots:");
+		for(int i=0; i<deadRobots.size(); i++)
+			System.out.print(deadRobots.get(i) + " ");
 		
 		input.close();
 	}
@@ -128,5 +146,11 @@ public class Robot {
 		float distance=(float) Math.sqrt(Math.pow(killerRobot.posX-currentRobot.posX, 2)+Math.pow(killerRobot.posY-currentRobot.posY, 2));
 		return distance;
 	}
+	 
+	 static void attackRobot(Robot killerRobot, Robot currentRobot) {
+		 killerRobot.setPosX(currentRobot.getPosX());
+		 killerRobot.setPosY(currentRobot.getPosY());
+		 killerRobot.setRobotHp(killerRobot.getRobotHp()-currentRobot.getRobotHp());
+	 }
 	
 }
