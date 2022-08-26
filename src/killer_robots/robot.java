@@ -3,22 +3,23 @@ package killer_robots;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
 
 
-public class robot {
+public class Robot {
 	
 	static Scanner input= new Scanner(System.in);
 	
 	String robotName;
 	int robotHp;
-	int posX;
-	int posY;
+	float posX;
+	float posY;
 	int viewRange;
 	boolean killerRobot;
 	boolean alive;
 	
 	
-	public robot (String robotName, int robotHp, int posX, int posY, int viewRange){
+	public Robot (String robotName, int robotHp, int posX, int posY, int viewRange){
 		this.robotName=robotName;
 		this.robotHp=robotHp;
 		this.posX=posX;
@@ -28,7 +29,7 @@ public class robot {
 		this.alive=true;
 	}
 	
-	public robot (String robotName, int robotHp, int posX, int posY){
+	public Robot (String robotName, int robotHp, int posX, int posY){
 		this.robotName=robotName;
 		this.robotHp=robotHp;
 		this.posX=posX;
@@ -44,11 +45,11 @@ public class robot {
 		this.robotHp=robotHp;
 	}
 	
-	public void setPosX(int posX) {
+	public void setPosX(float posX) {
 		this.posX=posX;
 	}
 	
-	public void setPosY(int posY) {
+	public void setPosY(float posY) {
 		this.posY=posY;
 	}
 	
@@ -73,11 +74,11 @@ public class robot {
 		return this.robotHp;
 	}
 	
-	public int getPosX() {
+	public float getPosX() {
 		return this.posX;
 	}
 	
-	public int getPosY() {
+	public float getPosY() {
 		return this.posY;
 	}
 	
@@ -94,21 +95,38 @@ public class robot {
 	}
 	
 	public String toString() {
-		return this.robotName + " " + this.robotHp + " " + this.posX + " " + this.posY;
+		return this.robotName + " " + this.robotHp + " " + this.posX + " " + this.posY + " " + this.viewRange;
 	}
 	
 	public static void main(String[] args) {
-
-		robot killerRobot = new robot("roby", 100, 1, 2, 15);
-		List <robot> robotList= new ArrayList<>();
+		
+		Robot killerRobot = new Robot(input.next(), input.nextInt(), input.nextInt(), input.nextInt(), input.nextInt());
+		List <Robot> robotList= new ArrayList<>();
 		int robotNumber=input.nextInt();
-		for(int i=1; i<=robotNumber; i++) {
-			robotList.add(new robot(input.next(), input.nextInt(), input.nextInt(), input.nextInt()));
+		for(int i=0; i<robotNumber; i++) 
+			robotList.add(new Robot(input.next(), input.nextInt(), input.nextInt(), input.nextInt()));
+		
+		boolean seeTarget=true;
+		
+		while (seeTarget || killerRobot.getRobotHp()<=0) {
+			List <Float> distanceList = new ArrayList<>();
+			float min=32000;
+			for(int robotIndex=0; robotIndex<robotNumber; robotIndex++) {
+				distanceList.add(calculateDistance(killerRobot, robotList.get(robotIndex)));
+				if(distanceList.get(robotIndex)<min)
+					min=distanceList.get(robotIndex);
+			}
+			int closestRobot = distanceList.indexOf(min);
+			seeTarget=false;
 		}
-	
-		for(int i=0; i<robotNumber; i++)
-			System.out.println(robotList.get(i).alive);
+
 		
 		input.close();
 	}
+	
+	 static float calculateDistance(Robot killerRobot, Robot currentRobot) {
+		float distance=(float) Math.sqrt(Math.pow(killerRobot.posX-currentRobot.posX, 2)+Math.pow(killerRobot.posY-currentRobot.posY, 2));
+		return distance;
+	}
+	
 }
