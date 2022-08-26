@@ -93,20 +93,21 @@ public class robot {
 		return this.alive;
 	}
 	
-	
+	public String toString() {
+		return this.robotName + " " + this.robotHp + " " + this.posX + " " + this.posY;
+	}
 	
 	public static void main(String[] args) {
+
 		robot killerRobot = new robot("roby", 100, 1, 2, 15);
-		
-		killerRobot.setKillerRobot(true);
-		System.out.println(killerRobot.getKillerRobot());
-		System.out.println(killerRobot.getViewRange());
-		
-		robot normalRobot = new robot("robustus", 100, 5, 3);
-		
-		System.out.println(normalRobot.getKillerRobot());
-		System.out.println(normalRobot.getViewRange());
-		System.out.println(normalRobot.getAliveStatus());
+		List <robot> robotList= new ArrayList<>();
+		int robotNumber=input.nextInt();
+		for(int i=1; i<=robotNumber; i++) {
+			robotList.add(new robot(input.next(), input.nextInt(), input.nextInt(), input.nextInt()));
+		}
+	
+		for(int i=0; i<robotNumber; i++)
+			System.out.println(robotList.get(i).alive);
 		
 		input.close();
 	}
